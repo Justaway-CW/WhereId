@@ -23,7 +23,8 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <img src="{{ url('storage/assets/images/homeimage.png') }}" alt="img" class="img-fluid">
+                {{-- <img src="{{ url('storage/assets/images/homeimage.png') }}" alt="img" class="img-fluid"> --}}
+                <img src="https://drive.google.com/thumbnail?id=1IOy4i1bwipXnFShtsNnIWm5JzGmkA01i&amp;sz=w1000" alt="img" class="img-fluid rounded-circle">
             </div>
         </div>
     </div>
