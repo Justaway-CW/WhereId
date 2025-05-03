@@ -11,12 +11,9 @@ use Illuminate\Support\Facades\Storage;
 class HomeController extends Controller
 {
     public function index(){
-        $directory = 'public/assets/temp';
-        $files = Storage::files($directory);
-        foreach($files as $file) {
-            Storage::delete($file);
-        }
-
+        // $path = public_path('storage/assets/tour_objects_images/7 Layers Waterfalls.jpg');
+        // $exist = file_exists($path);
+        // dd($exist);
         $tourTypes = TourType::get();
         $provinces = Province::get();
 

@@ -18,14 +18,14 @@ class TourismObjectController extends Controller
         // $validated = request()->validate([
         //     'province' => 'required',
         //     'type' => 'required'
-        // ]);
-        $directory = 'public/assets/temp';
-        $files = Storage::files($directory);
+        // ]); 
+        // $directory = 'public/assets/temp';
+        // $files = Storage::files($directory);
 
-        // Iterate through each file and delete it
-        foreach ($files as $file) {
-            Storage::delete($file);
-        }
+        // // Iterate through each file and delete it
+        // foreach ($files as $file) {
+        //     Storage::delete($file);
+        // }
 
         $tourTypes = TourType::get();
         $provincesData = Province::get();
@@ -73,9 +73,8 @@ class TourismObjectController extends Controller
                     foreach ($recommendations as &$recommendation) {
                         $recommendation['rankVal'] = number_format($recommendation['rankVal'], 4) * 100;
                         if ($recommendation['image'] != null) {
-                            $decoded_img = base64_decode($recommendation['image']);
-                            file_put_contents(public_path('storage/assets/temp/' . $recommendation['id'] . '.png'), $decoded_img);
-                            $recommendation['image'] = asset('/storage/assets/temp/'.$recommendation['id'] . '.png');
+                            
+                            $recommendation['image'] = url('storage/assets/tour_objects_images/'.$recommendation['image']);
 
                         }else{
                             $recommendation['image'] = "https://dummyimage.com/800x400/ebebeb/000000&text=_";
@@ -226,17 +225,18 @@ class TourismObjectController extends Controller
 
     public function show(TourObject $tourobject)
     {
-        $directory = 'public/assets/temp';
-        $files = Storage::files($directory);
+        // $directory = 'public/assets/temp';
+        // $files = Storage::files($directory);
 
-        // Iterate through each file and delete it
-        foreach ($files as $file) {
-            Storage::delete($file);
-        }
+        // // Iterate through each file and delete it
+        // foreach ($files as $file) {
+        //     Storage::delete($file);
+        // }
         if ($tourobject->image != null) {
-            $decoded_img = base64_decode($tourobject->image);
-            file_put_contents(public_path('storage/assets/temp/' . $tourobject->id . '.png'), $decoded_img);
-             $tourobject->image = asset('/storage/assets/temp/' . $tourobject->id . '.png');
+            // $decoded_img = base64_decode($tourobject->image);
+            // file_put_contents(public_path('storage/assets/temp/' . $tourobject->id . '.png'), $decoded_img);
+            //  $tourobject->image = asset('/storage/assets/temp/' . $tourobject->id . '.png');
+            $tourobject->image = url('storage/assets/tour_objects_images/'.$tourobject->image);
         }else{
             $tourobject->image = "https://dummyimage.com/800x400/c7c7c7/000000&text=_";
         }

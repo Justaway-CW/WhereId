@@ -17,22 +17,23 @@ class UserController extends Controller
         // }
             // dd($user);
 
-        $directory = 'public/assets/temp';
-        $files = Storage::files($directory);
+        // $directory = 'public/assets/temp';
+        // $files = Storage::files($directory);
 
-        // Iterate through each file and delete it
-        foreach ($files as $file) {
-            Storage::delete($file);
-        }
+        // // Iterate through each file and delete it
+        // foreach ($files as $file) {
+        //     Storage::delete($file);
+        // }
 
         $user =  User::where('username',$user)->firstOrFail();
         $favs = $user->favourite;
 
         foreach ($favs as &$fav) {
             if ($fav->image != null) {
-                $decoded_img = base64_decode($fav->image);
-                file_put_contents(public_path('storage/assets/temp/' . $fav->id . '.png'), $decoded_img);
-                $fav->image = asset('/storage/assets/temp/'.$fav->id .'.png');
+                // $decoded_img = base64_decode($fav->image);
+                // file_put_contents(public_path('storage/assets/temp/' . $fav->id . '.png'), $decoded_img);
+                // $fav->image = asset('/storage/assets/temp/'.$fav->id .'.png');
+                $fav->image = url('storage/assets/tour_objects_images/'.$fav->image);
             }else{
                 $fav->image = "https://dummyimage.com/800x400/c7c7c7/000000&text=_";
             }
@@ -53,9 +54,10 @@ class UserController extends Controller
 
         foreach ($favs as &$fav) {
             if ($fav->image != null) {
-                $decoded_img = base64_decode($fav->image);
-                file_put_contents(public_path('storage/assets/temp/' . $fav->id . '.png'), $decoded_img);
-                $fav->image = asset('/storage/assets/temp/'.$fav->id .'.png');
+                // $decoded_img = base64_decode($fav->image);
+                // file_put_contents(public_path('storage/assets/temp/' . $fav->id . '.png'), $decoded_img);
+                // $fav->image = asset('/storage/assets/temp/'.$fav->id .'.png');
+                $fav->image = url('storage/assets/tour_objects_images/'.$fav->image);
             }else{
                 $fav->image = "https://dummyimage.com/800x400/c7c7c7/000000&text=_";
             }

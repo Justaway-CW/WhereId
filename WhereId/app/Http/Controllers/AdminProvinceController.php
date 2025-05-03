@@ -13,11 +13,11 @@ class AdminProvinceController extends Controller
     public function index(){
         if(Auth::check()){
             if(auth()->user()->role === config('app.admin_key')){
-                $directory = 'public/assets/temp';
-                $files = Storage::files($directory);
-                foreach($files as $file) {
-                    Storage::delete($file);
-                }
+                // $directory = 'public/assets/temp';
+                // $files = Storage::files($directory);
+                // foreach($files as $file) {
+                //     Storage::delete($file);
+                // }
                 $datas = Province::select()->orderBy('id');
                 if(request()->has('search')){
                     $datas = $datas->where('keyname', 'like', '%'. request()->get('search','') .'%')

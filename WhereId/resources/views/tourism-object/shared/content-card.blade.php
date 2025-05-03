@@ -3,7 +3,7 @@
     <div class="container mb-5">
         <div class="row justify-content-evenly pt-3 mb-3">
             <div class="col-5 col-lg-3">
-                <select class="form-select" aria-label="Default select example" id="provinceInputSelect" disabled>
+                <select class="form-select" aria-label="Default select example" id="provinceInputSelect">
                     <option value="" selected>Province</option>
                     @foreach ($provincesData as $province)
                         <option value="{{ $province->keyname }}">{{ $province->name }}</option>
@@ -13,7 +13,7 @@
             </div>
 
             <div class="col-4 offset-3 col-lg-3 offset-lg-4">
-                <select class="form-select" aria-label="Default select example" id="tourObjectTypeSelect" disabled>
+                <select class="form-select" aria-label="Default select example" id="tourObjectTypeSelect">
                     <option value="" selected>Type</option>
                     @foreach ($tourTypes as $tourType)
                         <option value="{{ $tourType->keyname }}">{{ $tourType->type }}</option>
@@ -31,7 +31,7 @@
                     <div class="card">
                         <div class="row no-gutters">
                             <div class="col-auto d-flex align-items-center clipped-img">
-                                <img src="{{$recommendation['image']}}" class="card-img" alt="Image">
+                                <img src="{{ $recommendation['image'] }}" class="card-img" alt="Image">
                             </div>
                             <div class="col-md-12">
                                 <div class="card-body">

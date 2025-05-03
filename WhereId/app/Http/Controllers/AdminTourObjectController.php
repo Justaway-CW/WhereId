@@ -14,15 +14,15 @@ class AdminTourObjectController extends Controller
     public function index(){
         if(Auth::check()){
             if(auth()->user()->role === config('app.admin_key')){
-                $directory = 'public/assets/temp';
+                // $directory = 'public/assets/temp';
 
-                // Get all files in the directory
-                $files = Storage::files($directory);
+                // // Get all files in the directory
+                // $files = Storage::files($directory);
 
-                // Iterate through each file and delete it
-                foreach($files as $file) {
-                    Storage::delete($file);
-                }
+                // // Iterate through each file and delete it
+                // foreach($files as $file) {
+                //     Storage::delete($file);
+                // }
 
                 $datas = TourObject::select()->orderBy('id');
 
@@ -55,15 +55,15 @@ class AdminTourObjectController extends Controller
     }
     public function create(){
         if(auth()->user()->role === config('app.admin_key')){
-            $directory = 'public/assets/temp';
+            // $directory = 'public/assets/temp';
 
-            // Get all files in the directory
-            $files = Storage::files($directory);
+            // // Get all files in the directory
+            // $files = Storage::files($directory);
 
-            // Iterate through each file and delete it
-            foreach($files as $file) {
-                Storage::delete($file);
-            }
+            // // Iterate through each file and delete it
+            // foreach($files as $file) {
+            //     Storage::delete($file);
+            // }
 
             $tourTypes = TourType::get();
             $provinces = Province::get();
@@ -86,69 +86,97 @@ class AdminTourObjectController extends Controller
                 'description' => '',
                 'location' => '',
                 'note' => '',
-                'image' =>  'image',
+                'image' =>  'image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
         if(request()->has('image')){
-            $filePath = request()->file('image')->store('assets/temp','public');
-            $filePath2 = "storage/".$filePath;
-            $imagesData = file_get_contents(public_path($filePath2));
-            $imageEncode = base64_encode($imagesData);
-            $validated['image'] = $imageEncode;
-            Storage::disk('public')->delete($filePath ?? '');
+            $file = request()->file('image');
+            $filename = $file->getClientOriginalName();
+            $parts = explode('.', $filename);
+            $fileFullName = $validated['name']. '.' .end($parts);
 
-            $user = TourObject::create(
-                [
-                    'name' => $validated['name'],
-                    'tour_type_id' =>  $validated['tourtype'],
-                    'province_id' =>  $validated['province'],
-                    'distance' =>  $validated['distance'],
-                    'price' =>  $validated['price'],
-                    'rating' =>  $validated['rating'],
-                    'review' =>  $validated['review'],
-                    'description' =>  $validated['description'],
-                    'location' =>  $validated['location'],
-                    'note' => $validated['note'],
-                    'image' =>  $validated['image']
-                ]
-            );
+            $destination = public_path('storage/assets/tour_objects_images');
+            if (!file_exists($destination)) {
+                $dd('directory not exist');
+            }
+
+            
+            $validated['image'] = $fileFullName;
+
+            // $filePath = request()->file('image')->store('assets/temp','public');
+            // $filePath2 = "storage/".$filePath;
+            // $imagesData = file_get_contents(public_path($filePath2));
+            // $imageEncode = base64_encode($imagesData);
+            // Storage::disk('public')->delete($filePath ?? '');
+
+            try{
+                $user = TourObject::create(
+                    [
+                        'name' => $validated['name'],
+                        'tour_type_id' =>  $validated['tourtype'],
+                        'province_id' =>  $validated['province'],
+                        'distance' =>  $validated['distance'],
+                        'price' =>  $validated['price'],
+                        'rating' =>  $validated['rating'],
+                        'review' =>  $validated['review'],
+                        'description' =>  $validated['description'],
+                        'location' =>  $validated['location'],
+                        'note' => $validated['note'],
+                        'image' =>  $validated['image']
+                    ]
+                );
+
+                $filePath = public_path('storage/assets/tour_objects_images/'.$fileFullName);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                $file->move($destination, $fileFullName);
+            } catch (\Exception $e) {
+                return redirect()->route('admin_tour_objects.create', $id)->with('error','Query Error Occurred!'. $e->getMessage());
+            }
         }else{
-            $user = TourObject::create(
-                [
-                    'name' => $validated['name'],
-                    'tour_type_id' =>  $validated['tourtype'],
-                    'province_id' =>  $validated['province'],
-                    'distance' =>  $validated['distance'],
-                    'price' =>  $validated['price'],
-                    'rating' =>  $validated['rating'],
-                    'review' =>  $validated['review'],
-                    'description' =>  $validated['description'],
-                    'location' =>  $validated['location'],
-                    'note' => $validated['note']
-                ]
-            );
+            try{
+                $user = TourObject::create(
+                    [
+                        'name' => $validated['name'],
+                        'tour_type_id' =>  $validated['tourtype'],
+                        'province_id' =>  $validated['province'],
+                        'distance' =>  $validated['distance'],
+                        'price' =>  $validated['price'],
+                        'rating' =>  $validated['rating'],
+                        'review' =>  $validated['review'],
+                        'description' =>  $validated['description'],
+                        'location' =>  $validated['location'],
+                        'note' => $validated['note']
+                    ]
+                );
+            } catch (\Exception $e) {
+                return redirect()->route('admin_tour_objects.create', $id)->with('error','Query Error Occurred!'. $e->getMessage());
+            }
         }
         return redirect()->route('admin_tour_objects.index');
     }
 
     public function show($id){
         if(auth()->user()->role === config('app.admin_key')){
-            $directory = 'public/assets/temp';
+            // $directory = 'public/assets/temp';
 
-            // Get all files in the directory
-            $files = Storage::files($directory);
+            // // Get all files in the directory
+            // $files = Storage::files($directory);
 
-            // Iterate through each file and delete it
-            foreach($files as $file) {
-                Storage::delete($file);
-            }
+            // // Iterate through each file and delete it
+            // foreach($files as $file) {
+            //     Storage::delete($file);
+            // }
 
             $data = TourObject::where('id',$id)->firstOrFail();
             if($data->image != null){
 
-                $decoded_img = base64_decode($data->image);
-                file_put_contents(public_path("storage/assets/temp/".$data->id.".png"), $decoded_img);
-                 $data->image = asset('/storage/assets/temp/'.$data->id .'.png');
+                // $decoded_img = base64_decode($data->image);
+                // file_put_contents(public_path("storage/assets/temp/".$data->id.".png"), $decoded_img);
+                //  $data->image = asset('/storage/assets/temp/'.$data->id .'.png');
+
+                $data->image = url('storage/assets/tour_objects_images/'.$data->image);
             }else{
                 $data->image = "https://dummyimage.com/800x400/c7c7c7/000000&text=_";
             }
@@ -162,24 +190,25 @@ class AdminTourObjectController extends Controller
 
     public function edit($id){
         if(auth()->user()->role === config('app.admin_key')){
-            $directory = 'public/assets/temp';
+            // $directory = 'public/assets/temp';
 
-            // Get all files in the directory
-            $files = Storage::files($directory);
+            // // Get all files in the directory
+            // $files = Storage::files($directory);
 
-            // Iterate through each file and delete it
-            foreach($files as $file) {
-                Storage::delete($file);
-            }
+            // // Iterate through each file and delete it
+            // foreach($files as $file) {
+            //     Storage::delete($file);
+            // }
 
             $data = TourObject::where('id',$id)->firstOrFail();
             $tourTypes = TourType::get();
             $provinces = Province::get();
             if($data->image != null){
 
-                $decoded_img = base64_decode($data->image);
-                file_put_contents(public_path("storage/assets/temp/".$data->id.".png"), $decoded_img);
-                $data->image = asset('/storage/assets/temp/'.$data->id .'.png');
+                // $decoded_img = base64_decode($data->image);
+                // file_put_contents(public_path("storage/assets/temp/".$data->id.".png"), $decoded_img);
+                // $data->image = asset('/storage/assets/temp/'.$data->id .'.png');
+                $data->image = url('storage/assets/tour_objects_images/'.$data->image);
             }else{
                 $data->image = "https://dummyimage.com/800x400/c7c7c7/000000&text=_";
             }
@@ -204,16 +233,30 @@ class AdminTourObjectController extends Controller
             'description' => '',
             'location' => '',
             'note' => '',
-            'image' =>  'image',
+            'image' =>  'image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
         if(request()->has('image')){
-            $filePath = request()->file('image')->store('assets/temp','public');
-            $filePath2 = "storage/".$filePath;
-            $imagesData = file_get_contents(public_path($filePath2));
-            $imageEncode = base64_encode($imagesData);
-            $validated['image'] = $imageEncode;
-            Storage::disk('public')->delete($filePath ?? '');
+            // $filePath = request()->file('image')->store('assets/temp','public');
+            // $filePath2 = "storage/".$filePath;
+            // $imagesData = file_get_contents(public_path($filePath2));
+            // $imageEncode = base64_encode($imagesData);
+            // $validated['image'] = $imageEncode;
+            // Storage::disk('public')->delete($filePath ?? '');
+            
+
+            $file = request()->file('image');
+            $filename = $file->getClientOriginalName();
+            $parts = explode('.', $filename);
+            $fileFullName = $validated['name']. '.' .end($parts);
+            $validated['image'] = $fileFullName;
+
+            $destination = public_path('storage/assets/tour_objects_images');
+            if (!file_exists($destination)) {
+                $dd('directory not exist');
+            }
+
+
             try {
                 $user->update([
                     'name' => $validated['name'],
@@ -228,6 +271,12 @@ class AdminTourObjectController extends Controller
                     'note' => $validated['note'],
                     'image' => $validated['image']
                 ]);
+
+                $filePath = public_path('storage/assets/tour_objects_images/'.$user->image);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                $file->move($destination, $fileFullName);
             } catch (\Exception $e) {
                 return redirect()->route('admin_tour_objects.edit', $id)->with('error','Query Error Occurred!'. $e->getMessage());
             }
@@ -258,6 +307,11 @@ class AdminTourObjectController extends Controller
         $data = TourObject::where('id',$id)->firstOrFail();
 
         $data->delete();
+
+        $filePath = public_path('storage/assets/tour_objects_images/'.$data->image);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
 
         return redirect()->route('admin_tour_objects.index');
     }

@@ -71,7 +71,7 @@
                                 @endif
                             @endif
 
-                            <p> Location : <a href="https://www.google.com/maps/search/?api=1&query={{ $tourobject->name }} {{ $tourobject->location }}" target="_blank">{{ $tourobject->location }}</a></p>
+                            <p> Location : {{ $tourobject->location }}</p>
                             <p> Distance : {{ $tourobject->distance }} km from province capital ({{ $tourobject->province->capital }} city)</p>
                             <p> Rating & Review : {{ $tourobject->rating }} stars from {{ $tourobject->review }} reviews on Google Maps and TripAdvisor</p>
                             <p> Last Updated : {{ $tourobject->updated_at }}</p>
